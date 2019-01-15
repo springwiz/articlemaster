@@ -35,3 +35,10 @@ Package implements a Catalog Manager which exposes Rest Apis for the Article/Ite
     are not preferable for web scale applications. The Java's model of 1 thread per request fails for web scale applications as thread 
     context switches take most of the time/memory.
     The Golang services are light weight and offer rich support for concurrency via go routines and channels. The go routines are light     weight and offer rich support for parellelism.
+    
+ # improvements
+   * Implement more Apis to offer all the CRUD Operations and Data Query Operations.
+   * Offer connectors to various databases such as mongodb.
+   * Implement better map based indexes to offer faster lookup performance. We are running loops at this moment.
+   * Use a build tool such as go dep. The package uses go get for now.
+    
