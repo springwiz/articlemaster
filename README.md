@@ -30,8 +30,8 @@ Package implements a Catalog Manager which exposes Rest Apis for the Article/Ite
     
     The following are the considered factors:
     The NodeJS stack is more suitable for business processes which are I/O bound. The NodeJS Event Loop is not meant to run longer       
-    computations. 
-    The Java/SpringBoot based services are heavy weight and have much larger memomry footprint. They have much higher boot time and 
+    computations.
+    The Java/SpringBoot based services are heavy weight and have much larger memory footprint. They have much higher boot time and 
     are not preferable for web scale applications. The Java's model of 1 thread per request fails for web scale applications as thread 
-    context switches take most of the time/memory. 
+    context switches take most of the time/memory.
     The Golang services are light weight and offer rich support for concurrency via go routines and channels. The go routines are light     weight and offer rich support for parellelism.
