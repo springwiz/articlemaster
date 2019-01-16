@@ -11,7 +11,7 @@ type Repository interface {
 	GetArticle(Id uint64) (*model.Article, error)
 
 	// Save method for saving the articles
-	SaveArticle(article model.Article) error
+	SaveArticle(article *model.Article) error
 
 	// Query method for querying tags
 	GetArticlesByTagDate(tag string, date string) (*model.Tag, error)
