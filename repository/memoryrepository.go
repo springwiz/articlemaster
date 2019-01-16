@@ -26,10 +26,10 @@ type MemoryRepository struct {
 }
 
 // Singleton instance
-var instance MemoryRepository
+var instance Repository
 
 // Singleton access function
-func GetInstance() MemoryRepository {
+func GetInstance() Repository {
 	return instance
 }
 

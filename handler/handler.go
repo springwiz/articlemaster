@@ -32,22 +32,22 @@ func GetArticleByIdHandler() func(http.ResponseWriter, *http.Request) {
 		id, err1 := strconv.ParseUint(vars["id"], 10, 64)
 		if err1 != nil {
 			errRes, _ := json.Marshal(model.NewException("PE00001", "Parse Error"))
-			Logger.Println("Error while parsing: ", errRes)
-			json.NewEncoder(w).Encode(errRes)
+			Logger.Println("Error while parsing: ", string(errRes))
+			json.NewEncoder(w).Encode(string(errRes))
 			return
 		}
 		article, err1 := repository.GetInstance().GetArticle(id)
 		if err1 != nil {
 			errRes, _ := json.Marshal(model.NewException("PE00002", err1.Error()))
-			Logger.Println("Error while parsing: ", errRes)
-			json.NewEncoder(w).Encode(errRes)
+			Logger.Println("Error while parsing: ", string(errRes))
+			json.NewEncoder(w).Encode(string(errRes))
 			return
 		}
 		articleBytes, err := json.Marshal(article)
 		if err != nil {
 			errRes, _ := json.Marshal(model.NewException("PE00001", "Parse Error"))
-			Logger.Println("Error while parsing: ", errRes)
-			json.NewEncoder(w).Encode(errRes)
+			Logger.Println("Error while parsing: ", string(errRes))
+			json.NewEncoder(w).Encode(string(errRes))
 			return
 		}
 		Logger.Println("Response published: ", string(articleBytes))
@@ -66,16 +66,16 @@ func GetArticlesByTagDateHandler() func(http.ResponseWriter, *http.Request) {
 		tag, err1 := repository.GetInstance().GetArticlesByTagDate(vars["tagName"], vars["date"])
 		if err1 != nil {
 			errRes, _ := json.Marshal(model.NewException("PE00002", err1.Error()))
-			Logger.Println("Error while parsing: ", errRes)
-			json.NewEncoder(w).Encode(errRes)
+			Logger.Println("Error while parsing: ", string(errRes))
+			json.NewEncoder(w).Encode(string(errRes))
 			return
 		}
 
 		tagBytes, err := json.Marshal(tag)
 		if err != nil {
 			errRes, _ := json.Marshal(model.NewException("PE00001", "Parse Error"))
-			Logger.Println("Error while parsing: ", errRes)
-			json.NewEncoder(w).Encode(errRes)
+			Logger.Println("Error while parsing: ", string(errRes))
+			json.NewEncoder(w).Encode(string(errRes))
 			return
 		}
 		Logger.Println("Response published: ", string(tagBytes))
@@ -94,16 +94,16 @@ func PostArticleHandler() func(http.ResponseWriter, *http.Request) {
 		err1 := json.NewDecoder(r.Body).Decode(&article)
 		if err1 != nil {
 			errRes, _ := json.Marshal(model.NewException("PE00002", err1.Error()))
-			Logger.Println("Error while parsing: ", errRes)
-			json.NewEncoder(w).Encode(errRes)
+			Logger.Println("Error while parsing: ", string(errRes))
+			json.NewEncoder(w).Encode(string(errRes))
 			return
 		}
 		article.Date, _ = time.Parse("yyyy-MM-dd", article.DateString)
 		err := repository.GetInstance().SaveArticle(article)
 		if err != nil {
 			errRes, _ := json.Marshal(model.NewException("PE00002", err.Error()))
-			Logger.Println("Error while parsing: ", errRes)
-			json.NewEncoder(w).Encode(errRes)
+			Logger.Println("Error while parsing: ", string(errRes))
+			json.NewEncoder(w).Encode(string(errRes))
 			return
 		}
 		json.NewEncoder(w).Encode(model.NewException("", "Success"))
