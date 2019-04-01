@@ -13,6 +13,10 @@ type Exception struct {
 	CodeDescription string
 }
 
+func (e *Exception) Error() string {
+    return e.CodeString
+}
+
 // create a new blank exception
 func NewException(codeString string, codeDescription string) *Exception {
 	NewException := &Exception{
