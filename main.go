@@ -11,6 +11,7 @@ import (
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/articles/{id}", handler.GetArticleByIdHandler()).Methods("GET")
+	r.HandleFunc("/articles/{id}", handler.PutArticleHandler()).Methods("PUT")
 	r.HandleFunc("/articles", handler.PostArticleHandler()).Methods("POST")
 	r.HandleFunc("/tags/{tagName}/{date}", handler.GetArticlesByTagDateHandler()).Methods("GET")
 	http.ListenAndServe(":80", r)

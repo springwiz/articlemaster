@@ -3,11 +3,12 @@ package repository
 
 import (
 	"fmt"
-	"github.com/springwiz/articlemaster/model"
 	"log"
 	"os"
+	"sort"
 	"strings"
 	"sync"
+	"github.com/springwiz/articlemaster/model"
 )
 
 // Pure memory based implementation of repository
@@ -16,7 +17,7 @@ type MemoryRepository struct {
 	ArticleMap map[uint64]model.Article
 
 	// Tag storage map index over article map
-	TagMap map[string]map[uint64]struct{}
+	TagMap map[string]map[string]map[uint64]struct{}
 
 	// Locking
 	Lock sync.RWMutex
@@ -37,8 +38,8 @@ func GetInstance() Repository {
 func init() {
 	instance = MemoryRepository{
 		ArticleMap: make(map[uint64]model.Article),
-		TagMap:     make(map[string]map[uint64]struct{}),
-		Logger:     log.New(os.Stdout, "MemoryRepository", log.Ldate|log.Ltime),
+		TagMap:     make(map[string]map[string]map[uint64]struct{}),
+		Logger:     log.New(os.Stdout, "github.com/gokoder/repository/MemoryRepository:", log.Ldate|log.Ltime),
 	}
 }
 
@@ -63,10 +64,14 @@ func (m MemoryRepository) SaveArticle(article *model.Article) error {
 	defer m.Lock.Unlock()
 	m.ArticleMap[article.Id] = *article
 	for _, tag := range article.Tags {
+		tempDateString := strings.ReplaceAll(article.DateString, "-", "")
 		if m.TagMap[tag] == nil {
-			m.TagMap[tag] = make(map[uint64]struct{})
+			m.TagMap[tag] = make(map[string]map[uint64]struct{})
 		}
-		m.TagMap[tag][article.Id] = exists
+		if m.TagMap[tag][tempDateString] == nil {
+			m.TagMap[tag][tempDateString] = make(map[uint64]struct{})
+		}
+		m.TagMap[tag][tempDateString][article.Id] = exists
 	}
 	return nil
 }
@@ -74,57 +79,41 @@ func (m MemoryRepository) SaveArticle(article *model.Article) error {
 // Query method for querying tags
 func (m MemoryRepository) GetArticlesByTagDate(tagString string, date string) (*model.Tag, error) {
 	m.Logger.Println("Entry: Get articles by Tag: ", tagString)
-	year := date[0:4]
-	month := date[4:6]
-	day := date[6:8]
 	tag := new(model.Tag)
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()
-	val, exists := m.TagMap[tagString]
-	exists1 := struct{}{}
-
-	articleDayCount := 0
-	articleMap := make(map[uint64]struct{})
-	for _, v := range m.TagMap {
-		for id, _ := range v {
-			article := m.ArticleMap[id]
-			dateEle := strings.Split(article.DateString, "-")
-			if dateEle[0] == year && dateEle[1] == month && dateEle[2] == day {
-				tag.Count++
-				if articleDayCount < 10 {
-					articleMap[id] = exists1
-				}
-				articleDayCount++
-			}
-		}
-	}
-	for k, _ := range articleMap {
-		tag.Articles = append(tag.Articles, k)
-	}
+	val, exists := m.TagMap[tagString][date]
+	tag.Count = uint64(len(m.TagMap[tagString][date]))
 	if exists {
 		tag.Tag = tagString
+		sliceKeys := make([]uint64, 0)
 		for key := range val {
+			sliceKeys = append(sliceKeys, key)
 			article, _ := m.ArticleMap[key]
 			if !exists {
 				delete(val, key)
 			}
-			dateEle := strings.Split(article.DateString, "-")
-			if dateEle[0] == year && dateEle[1] == month && dateEle[2] == day {
-				for _, articleTag := range article.Tags {
-					tagExists := false
-					for _, tagStr := range tag.RelatedTags {
-						if articleTag == tagStr {
-							tagExists = true
-						}
+			for _, articleTag := range article.Tags {
+				tagExists := false
+				for _, tagStr := range tag.RelatedTags {
+					if articleTag == tagStr {
+						tagExists = true
 					}
-					if !tagExists {
-						tag.RelatedTags = append(tag.RelatedTags, articleTag)
-					}
+				}
+				if !tagExists {
+					tag.RelatedTags = append(tag.RelatedTags, articleTag)
 				}
 			}
 		}
+		sort.Slice(sliceKeys, func(i, j int) bool { return sliceKeys[i] < sliceKeys[j] })
+		var higherIndx int
+		if len(sliceKeys) >= 10 {
+			higherIndx = 10
+		} else {
+			higherIndx = len(sliceKeys)
+		}
+		tag.Articles = sliceKeys[0:higherIndx]
 		return tag, nil
-	} else {
-		return nil, fmt.Errorf("tag %s not found", tagString)
 	}
+	return nil, fmt.Errorf("tag %s not found", tagString)
 }
