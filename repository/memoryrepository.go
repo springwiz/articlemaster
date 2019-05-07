@@ -39,7 +39,7 @@ func init() {
 	instance = MemoryRepository{
 		ArticleMap: make(map[uint64]model.Article),
 		TagMap:     make(map[string]map[string]map[uint64]struct{}),
-		Logger:     log.New(os.Stdout, "github.com/gokoder/repository/MemoryRepository:", log.Ldate|log.Ltime),
+		Logger:     log.New(os.Stdout, "github.com/springwiz/repository/MemoryRepository:", log.Ldate|log.Ltime),
 	}
 }
 
