@@ -1,10 +1,10 @@
-package test
+package repository
 
 import (
-	"github.com/springwiz/articlemaster/model"
-	"github.com/springwiz/articlemaster/repository"
 	"testing"
 	"time"
+
+	"github.com/springwiz/articlemaster/model"
 )
 
 func TestGetArticle(t *testing.T) {
@@ -16,8 +16,8 @@ func TestGetArticle(t *testing.T) {
 		Tags:       []string{"health", "fitness", "science"},
 		DateString: "2019-01-15",
 	}
-	repository.GetInstance().SaveArticle(savedArticle)
-	getArticle, _ := repository.GetInstance().GetArticle(1)
+	GetInstance().SaveArticle(savedArticle)
+	getArticle, _ := GetInstance().GetArticle(1)
 	if getArticle.Id != savedArticle.Id {
 		t.Errorf("Test failed, expected: '%d', got:  '%d'", savedArticle.Id, getArticle.Id)
 	}
@@ -32,7 +32,7 @@ func TestSaveArticle(t *testing.T) {
 		Tags:       []string{"health", "fitness", "science"},
 		DateString: "2019-01-15",
 	}
-	err := repository.GetInstance().SaveArticle(savedArticle)
+	err := GetInstance().SaveArticle(savedArticle)
 	if err != nil {
 		t.Errorf("Test failed, error thrown while saving %s", err.Error())
 	}
@@ -47,8 +47,8 @@ func TestGetArticlesByTagDate(t *testing.T) {
 		Tags:       []string{"health", "fitness", "science"},
 		DateString: "2019-01-15",
 	}
-	repository.GetInstance().SaveArticle(savedArticle)
-	tag, _ := repository.GetInstance().GetArticlesByTagDate("health", "20190115")
+	GetInstance().SaveArticle(savedArticle)
+	tag, _ := GetInstance().GetArticlesByTagDate("health", "20190115")
 	test := false
 	for _, id := range tag.Articles {
 		if id == savedArticle.Id {
