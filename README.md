@@ -12,8 +12,8 @@ Package implements a Catalog Manager which exposes Rest Apis for the Article/Ite
 
 installation
 1.Install the Go lang runtime on the local machine.
-2.Create the path on the local machine at $GOPATH/src/github.com/gokoder.
-3.Change into articlemaster and Run go get github.com/gokoder/articlemaster.
+2.Create the path on the local machine at $GOPATH/src/github.com/springwiz.
+3.Change into articlemaster and Run go get github.com/springwiz/articlemaster.
 4.Run go run main.go.
 
 assumptions
